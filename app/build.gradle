@@ -48,6 +48,11 @@ android {
 }
 
 dependencies {
+
+    implementation(project(Modules.core))
+    implementation(project(Modules.heroDomain))
+    implementation(project(Modules.heroInteractors))
+
     implementation(AndroidX.coreKtx)
     implementation(AndroidX.appCompat)
     implementation(AndroidX.lifecycleVmKtx)
@@ -63,4 +68,6 @@ dependencies {
     implementation(Junit.junit4)
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+//    implementation(SqlDelight.androidDriver)
+    implementation("app.cash.sqldelight:android-driver:2.0.0-alpha05")
 }
