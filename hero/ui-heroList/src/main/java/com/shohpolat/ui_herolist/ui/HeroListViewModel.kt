@@ -14,19 +14,26 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
+import javax.inject.Named
 
 @HiltViewModel
 class HeroListViewModel
 @Inject
 constructor(
-    private val getHeros: GetHeros
+    private val getHeros: GetHeros,
+    private @Named("HeroListLogger") val  logger: Logger
 ): ViewModel(){
 
-    private val logger = Logger("GetHerosTest")
     val heros: MutableState<HeroListState> = mutableStateOf(HeroListState())
 
     init {
-        getHeros()
+        onEventTriggered(HeroListEvents.GetHeros)
+    }
+
+    fun onEventTriggered(event: HeroListEvents) {
+        when(event) {
+            HeroListEvents.GetHeros -> getHeros()
+        }
     }
 
     fun getHeros() {
