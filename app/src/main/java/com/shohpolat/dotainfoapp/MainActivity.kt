@@ -13,6 +13,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavOptions
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import coil.ImageLoader
 import com.shohpolat.core.DataState
@@ -28,6 +34,8 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import com.shohpolat.dotainfoapp.R
+import com.shohpolat.navigation.Screen
+import com.shohpolat.ui_herodetail.ui.HeroDetail
 import com.shohpolat.ui_herolist.ui.HeroListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -48,14 +56,55 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    val heroListViewModel: HeroListViewModel = hiltViewModel()
-                   HeroList(
-                       state = heroListViewModel.heros.value,
-                       imageLoader = imageLoader
-                   )
+
+                    val navController = rememberNavController()
+
+                    NavHost(
+                        navController = navController,
+                        startDestination = Screen.HeroList.route,
+                        builder = {
+
+                            addHeroList(
+                                navController = navController,
+                                imageLoader = imageLoader
+                            )
+
+                            addHeroDetail()
+
+                        }
+                    )
                 }
             }
         }
+    }
+}
+
+fun NavGraphBuilder.addHeroList(
+    navController: NavController,
+    imageLoader: ImageLoader
+){
+    composable(
+        route = Screen.HeroList.route,
+    ) {
+        val heroListViewModel: HeroListViewModel = hiltViewModel()
+        HeroList(
+            state = heroListViewModel.heros.value,
+            imageLoader = imageLoader,
+            navigateToDetailsScreen = { heroId ->
+                navController.navigate(
+                    route = "${Screen.HeroDetail.route}/$heroId"
+                )
+            }
+        )
+    }
+}
+
+fun NavGraphBuilder.addHeroDetail() {
+    composable(
+        route = Screen.HeroDetail.route + "/{heroId}",
+        arguments = Screen.HeroDetail.arguments
+    ) {
+        HeroDetail(heroId = it.arguments?.getInt("heroId"))
     }
 }
 

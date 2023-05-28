@@ -17,14 +17,17 @@ import com.shohpolat.ui_herolist.components.HeroListItem
 @Composable
 fun HeroList(
     state: HeroListState,
-    imageLoader: ImageLoader
+    imageLoader: ImageLoader,
+    navigateToDetailsScreen:(Int) -> Unit
 ){
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn{
             items(state.heros) { item: Hero ->
                 HeroListItem(
                     hero = item,
-                    onSelectHero = {},
+                    onSelectHero = { heroId->
+                        navigateToDetailsScreen(heroId)
+                    },
                     imageLoader = imageLoader
                 )
             }
