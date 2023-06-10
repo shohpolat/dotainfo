@@ -1,5 +1,7 @@
 package com.shohpolat.dotainfoapp
 
+import android.content.res.Resources
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,7 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.res.ResourcesCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -36,6 +40,7 @@ import kotlinx.coroutines.flow.onEach
 import com.shohpolat.dotainfoapp.R
 import com.shohpolat.navigation.Screen
 import com.shohpolat.ui_herodetail.ui.HeroDetail
+import com.shohpolat.ui_herodetail.ui.HeroDetailViewModel
 import com.shohpolat.ui_herolist.ui.HeroListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -69,7 +74,10 @@ class MainActivity : ComponentActivity() {
                                 imageLoader = imageLoader
                             )
 
-                            addHeroDetail()
+                            addHeroDetail(
+                                imageLoader = imageLoader,
+                                resources = resources
+                            )
 
                         }
                     )
@@ -89,6 +97,7 @@ fun NavGraphBuilder.addHeroList(
         val heroListViewModel: HeroListViewModel = hiltViewModel()
         HeroList(
             state = heroListViewModel.heros.value,
+            events = heroListViewModel::onEventTriggered,
             imageLoader = imageLoader,
             navigateToDetailsScreen = { heroId ->
                 navController.navigate(
@@ -99,12 +108,21 @@ fun NavGraphBuilder.addHeroList(
     }
 }
 
-fun NavGraphBuilder.addHeroDetail() {
+fun NavGraphBuilder.addHeroDetail(
+    imageLoader: ImageLoader,
+    resources:Resources
+) {
     composable(
         route = Screen.HeroDetail.route + "/{heroId}",
         arguments = Screen.HeroDetail.arguments
     ) {
-        HeroDetail(heroId = it.arguments?.getInt("heroId"))
+        val viewModel: HeroDetailViewModel = hiltViewModel()
+        HeroDetail(
+            state = viewModel.state.value,
+            imageLoader = imageLoader,
+            placeHolderDark = ResourcesCompat.getDrawable(resources,R.drawable.black_background,null),
+            placeHolderLight = ResourcesCompat.getDrawable(resources,R.drawable.white_background,null)
+        )
     }
 }
 

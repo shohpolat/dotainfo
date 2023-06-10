@@ -5,7 +5,9 @@ import com.shohpolat.hero_datasource.cache.HeroCache
 import com.shohpolat.hero_datasource.network.HeroService
 
 data class HeroInteractors(
-    val getHeros: GetHeros
+    val getHeros: GetHeros,
+    val getHeroFromCache: GetHeroFromCache,
+    val filterHeros: FilterHeros
 ) {
     companion object Factory{
         fun build(sqlDriver: SqlDriver): HeroInteractors {
@@ -15,7 +17,11 @@ data class HeroInteractors(
                 getHeros = GetHeros(
                     service = heroService,
                     cache = cache
-                )
+                ),
+                getHeroFromCache = GetHeroFromCache(
+                    cache = cache
+                ),
+                filterHeros = FilterHeros()
             )
         }
 

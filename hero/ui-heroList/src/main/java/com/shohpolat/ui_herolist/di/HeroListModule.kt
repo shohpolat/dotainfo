@@ -1,6 +1,7 @@
 package com.shohpolat.ui_herolist.di
 
 import com.shohpolat.core.Logger
+import com.shohpolat.hero_interactors.FilterHeros
 import com.shohpolat.hero_interactors.GetHeros
 import com.shohpolat.hero_interactors.HeroInteractors
 import dagger.Module
@@ -25,6 +26,12 @@ object HeroListModule {
     @Singleton
     fun provideGetHeros(interactors: HeroInteractors): GetHeros {
         return interactors.getHeros
+    }
+
+    @Provides
+    @Singleton
+    fun provideFilterHeros(interactors: HeroInteractors): FilterHeros {
+        return interactors.filterHeros
     }
 
 }
